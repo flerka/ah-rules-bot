@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+
+  ahrulesbot:
+    container_name: ahrulesbot
+    image: flerka/ahrulesbot:latest
+    environment: # тут если что-то нужно..
+      KEY_NAME: "VALUE"
+    networks:
+      - rpi
+    restart: unless-stopped
+    logging:
+        driver: "json-file"
+        options:
+            max-file: "5"
+            max-size: "10m"
+
+networks:
+  rpi:
+     external: true
