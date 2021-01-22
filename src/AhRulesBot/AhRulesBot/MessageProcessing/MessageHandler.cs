@@ -1,6 +1,7 @@
 ﻿using AhRulesBot.Infrastructure;
 using Serilog;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace AhRulesBot.MessageProcessing
         private readonly List<RuleItem> _rules;
         private readonly ILogger _logger;
 
+        private static readonly ConcurrentDictionary<int, bool> usersCash = new ConcurrentDictionary<int, bool>();
+
         public MessageHandler(
             ILogger logger,
             AppConfig config,
@@ -31,17 +34,14 @@ namespace AhRulesBot.MessageProcessing
 
         public async Task Handle(Message message)
         {
-            Chat chat = message.Chat;
-
             if (string.IsNullOrEmpty(message?.Text))
                 return;
 
-            _logger.Information($"@{message.From.Username}: {message.Text}");
+            _logger.Information($"@{message.From.Username} {message.From.Id}: {message.Text}");
 
-            if (chat.Id != _config.AHChatId && chat.Id != _config.TestChatId)
+            if (! await IsValidSender(message))
             {
-                await _botClient.SendTextMessageAsync(chat.Id, "I don't know you.");
-                return;
+                return; 
             }
 
             if (DateTime.UtcNow.Subtract(message.Date).TotalMinutes > 4)
@@ -49,7 +49,7 @@ namespace AhRulesBot.MessageProcessing
                 return;
             }
 
-            await OnMessageToChat(chat.Id, message.Text);
+            await OnMessageToChat(message.Chat.Id, message.Text);
         }
 
         private async Task OnMessageToChat(long chatId, string msg)
@@ -84,6 +84,31 @@ namespace AhRulesBot.MessageProcessing
             {
                 await SendMessageToChat(chatId, "Something went wrong");
             }
+        }
+
+        private async Task<bool> IsValidSender(Message message)
+        {
+            if (message.Chat.Type == ChatType.Private)
+            {
+                var isAllowed = false;
+                if (!usersCash.TryGetValue(message.From.Id, out isAllowed))
+                {
+                    try
+                    {
+                        var member = await _botClient.GetChatMemberAsync(_config.TestChatId, message.From.Id);
+                        isAllowed = member != null && member.Status != ChatMemberStatus.Left;
+                        usersCash.TryAdd(message.From.Id, isAllowed);
+                    }
+                    catch
+                    {
+                    }
+                }
+                
+
+                return isAllowed;
+            }
+
+            return message.Chat.Id == _config.AHChatId || message.Chat.Id == _config.TestChatId;
         }
 
         private async Task SendMessageToChat(long chatId, string msg)
