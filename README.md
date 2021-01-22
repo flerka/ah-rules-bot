@@ -1,1 +1,1 @@
-# ah-rules-bot
+Telegram bot to help with rules for Arkham Horror LCG. To run application you need to add https://github.com/Sarnetsky/arkham-cards-data/blob/master/rules/ru/rules.json file to your project.
