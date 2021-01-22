@@ -1,5 +1,5 @@
 ﻿
-namespace AhRulesBot
+namespace AhRulesBot.Infrastructure
 {
     public class AppConfig
     {

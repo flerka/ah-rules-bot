@@ -1,4 +1,5 @@
 using AhRulesBot.Infrastructure;
+using AhRulesBot.MessageProcessing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +21,7 @@ namespace AhRulesBot
                     IConfiguration configuration = hostContext.Configuration;
                     AppConfig options = configuration.Get<AppConfig>();
                     services.AddSingleton(options);
-
+                    services.AddSingleton<IMessageHandler, MessageHandler>();
                     services.AddSerilogLogging();
                     services.AddTelegramBotClient();
                     services.AddAhRulesFile();
