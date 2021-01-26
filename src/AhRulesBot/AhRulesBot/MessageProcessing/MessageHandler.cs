@@ -18,7 +18,7 @@ namespace AhRulesBot.MessageProcessing
         private readonly List<RuleItem> _rules;
         private readonly ILogger _logger;
 
-        private static readonly ConcurrentDictionary<int, bool> usersCash = new ConcurrentDictionary<int, bool>();
+        private static readonly ConcurrentDictionary<int, bool> usersCache = new ConcurrentDictionary<int, bool>();
 
         public MessageHandler(
             ILogger logger,
@@ -91,16 +91,17 @@ namespace AhRulesBot.MessageProcessing
             if (message.Chat.Type == ChatType.Private)
             {
                 var isAllowed = false;
-                if (!usersCash.TryGetValue(message.From.Id, out isAllowed))
+                if (!usersCache.TryGetValue(message.From.Id, out isAllowed))
                 {
                     try
                     {
                         var member = await _botClient.GetChatMemberAsync(_config.TestChatId, message.From.Id);
                         isAllowed = member != null && member.Status != ChatMemberStatus.Left;
-                        usersCash.TryAdd(message.From.Id, isAllowed);
+                        usersCache.TryAdd(message.From.Id, isAllowed);
                     }
                     catch
                     {
+                        _logger.Warning($"Can't verify if user is member of the group. {_config.TestChatId}, {message.From.Id}");
                     }
                 }
                 
