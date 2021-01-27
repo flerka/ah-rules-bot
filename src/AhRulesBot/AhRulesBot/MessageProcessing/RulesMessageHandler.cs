@@ -11,7 +11,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace AhRulesBot.MessageProcessing
 {
-    public class MessageHandler : IMessageHandler
+    public class RulesMessageHandler : IMessageHandler
     {
         private readonly AppConfig _config;
         private readonly ITelegramBotClient _botClient;
@@ -20,7 +20,7 @@ namespace AhRulesBot.MessageProcessing
 
         private static readonly ConcurrentDictionary<int, bool> usersCache = new ConcurrentDictionary<int, bool>();
 
-        public MessageHandler(
+        public RulesMessageHandler(
             ILogger logger,
             AppConfig config,
             ITelegramBotClient botClient,

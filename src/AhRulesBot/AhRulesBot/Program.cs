@@ -21,7 +21,7 @@ namespace AhRulesBot
                     IConfiguration configuration = hostContext.Configuration;
                     AppConfig options = configuration.Get<AppConfig>();
                     services.AddSingleton(options);
-                    services.AddSingleton<IMessageHandler, MessageHandler>();
+                    services.AddSingleton<IMessageHandler, RulesMessageHandler>();
                     services.AddSerilogLogging();
                     services.AddTelegramBotClient();
                     services.AddAhRulesFile();

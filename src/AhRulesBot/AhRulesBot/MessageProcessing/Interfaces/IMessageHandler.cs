@@ -5,6 +5,6 @@ namespace AhRulesBot.MessageProcessing
 {
     public interface IMessageHandler
     {
-        public Task Handle(Message message);
+       public Task Handle(Message message);
     }
 }
