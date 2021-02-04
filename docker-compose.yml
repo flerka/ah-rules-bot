@@ -4,9 +4,15 @@ services:
 
   ahrulesbot:
     container_name: ahrulesbot
-    image: flerka/ahrulesbot:latest
-    environment: # тут если что-то нужно..
-      KEY_NAME: "VALUE"
+    image: flerkam/ah-rules-bot:latest
+    volumes:
+     - ./rules.json:/app/rules.json
+    environment:
+      AhRulesBot_TestChatId: "ID"
+      AhRulesBot_AHChatId: "ID"
+      AhRulesBot_BotAdminId: "ID"
+      AhRulesBot_ApiKey: "KEY"
+      AhRulesBot_BotName: "@MYBOT"
     networks:
       - rpi
     restart: unless-stopped

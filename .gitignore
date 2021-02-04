@@ -357,3 +357,7 @@ launchsettings.json
 
 # Rules
 rules.json
+.env.prod
+.env.dev
+prod.docker-compose.yml
+dev.docker-compose.yml
