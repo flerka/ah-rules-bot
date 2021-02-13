@@ -1,0 +1,17 @@
+name: PR
+
+on:
+  pull_request: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+      - run: dotnet build src/AhRulesBot/AhRulesBot.sln
+      - run: dotnet test src/AhRulesBot/AhRulesBot.sln
