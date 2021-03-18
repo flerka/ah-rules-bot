@@ -37,6 +37,12 @@ namespace AhRulesBot.MessageProcessing
             if (string.IsNullOrEmpty(message?.Text))
                 return;
 
+            // Only commands should be processed
+            if (!message.Text.StartsWith('/'))
+            {
+                return;
+            }
+
             _logger.Information($"@{message.From.Username} {message.From.Id}: {message.Text}");
 
             if (! await IsValidSender(message))
@@ -54,8 +60,9 @@ namespace AhRulesBot.MessageProcessing
 
         private async Task OnMessageToChat(long chatId, string msg)
         {
-            if (msg.StartsWith('/') || msg.StartsWith("!"))
-                msg = msg.Remove(0, 1);
+            // parse command symbol
+            msg = msg.Remove(0, 1);
+
             if (msg.EndsWith(_config.BotName))
                 msg = msg.Remove(msg.LastIndexOf(_config.BotName));
             try
