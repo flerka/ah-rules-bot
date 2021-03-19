@@ -74,7 +74,7 @@ namespace AhRulesBot.BotRequestsProcessing
 
             foreach (var msg in msgs)
             {
-                var result = await _botClient.SendTextMessageAsync(new ChatId(chatId), msg, ParseMode.Html, cancellationToken: cancellationToken );
+                var result = await _botClient.SendTextMessageAsync(new ChatId(chatId), msg, ParseMode.Html, cancellationToken: cancellationToken);
                 if (ttl.HasValue)
                 {
                     await _channel.WriteAsync(new TelegramMessageInfo
