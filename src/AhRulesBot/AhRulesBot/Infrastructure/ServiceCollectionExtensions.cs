@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AhRulesBot.MessageProcessing;
+using AhRulesBot.MessageProcessing.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
@@ -47,6 +49,19 @@ namespace AhRulesBot.Infrastructure
 
             return services.AddSingleton<List<RuleItem>>(
                 ctx => rules);
+        }
+
+        internal static IServiceCollection AddMessageHandlers(this IServiceCollection services)
+        {
+            services.AddSingleton<RulesMessageHandler>(
+                x => new RulesMessageHandler(x.GetRequiredService<ILogger>(), x.GetRequiredService<List<RuleItem>>(), null));
+            services.AddSingleton<CommandMessageHandler>(
+                x => new CommandMessageHandler(x.GetRequiredService<RulesMessageHandler>()));
+            services.AddSingleton<UnknownMessageHandler>(
+                x => new UnknownMessageHandler(x.GetRequiredService<CommandMessageHandler>()));
+            services.AddSingleton<IMessageHandler, LongMessageHandler>(
+                x => new LongMessageHandler(x.GetRequiredService<UnknownMessageHandler>()));
+            return services;
         }
     }
 }
