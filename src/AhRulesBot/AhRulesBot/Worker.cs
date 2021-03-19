@@ -16,16 +16,16 @@ namespace AhRulesBot
         private readonly ITelegramBotClient _botClient;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly ILogger _logger;
-        private readonly IMessageHandler _messageHandler;
+        private readonly ITelegramMessageProcessor _telegramMessageProcessor;
 
         public Worker(
             ILogger logger,
             ITelegramBotClient botClient,
             IHostApplicationLifetime hostApplicationLifetime,
-            IMessageHandler messageHandler)
+            ITelegramMessageProcessor telegramMessageProcessor)
         {
             _logger = logger;
-            _messageHandler = messageHandler;
+            _telegramMessageProcessor = telegramMessageProcessor;
             _hostApplicationLifetime = hostApplicationLifetime;
             _botClient = botClient;
         }
@@ -42,7 +42,7 @@ namespace AhRulesBot
 
                 await foreach (Update update in updateReceiver.YieldUpdatesAsync())
                 {
-                    await _messageHandler.Handle(update.Message);
+                    await _telegramMessageProcessor.Process(update.Message);
                 }
             }
             catch (Exception e)

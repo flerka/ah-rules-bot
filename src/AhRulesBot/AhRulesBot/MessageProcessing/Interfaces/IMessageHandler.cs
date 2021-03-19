@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
-using Telegram.Bot.Types;
+﻿using System.Collections.Generic;
 
-namespace AhRulesBot.MessageProcessing
+namespace AhRulesBot.MessageProcessing.Interfaces
 {
     public interface IMessageHandler
     {
-       public Task Handle(Message message);
+        public List<string> Handle(string message);
     }
 }

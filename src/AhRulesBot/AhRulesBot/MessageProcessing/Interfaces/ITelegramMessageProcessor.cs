@@ -3,8 +3,8 @@ using Telegram.Bot.Types;
 
 namespace AhRulesBot.MessageProcessing
 {
-    internal interface IMessageAccessValidator
+    public interface ITelegramMessageProcessor
     {
-        public Task<bool> IsValid(Message message);
+       public Task Process(Message message);
     }
 }

@@ -20,12 +20,14 @@ namespace AhRulesBot
                 {
                     IConfiguration configuration = hostContext.Configuration;
                     AppConfig options = configuration.Get<AppConfig>();
-                    services.AddSingleton(options);
-                    services.AddSingleton<IMessageHandler, RulesMessageHandler>();
-                    services.AddSerilogLogging();
-                    services.AddTelegramBotClient();
-                    services.AddAhRulesFile();
-                    services.AddHostedService<Worker>();
+                    services.AddSingleton(options)
+                            .AddMessageHandlers()
+                            .AddSingleton<ITelegramMessageProcessor, TelegramMessageProcessor>()
+                            .AddSingleton<IMessageValidator, MessageValidator>()
+                            .AddSerilogLogging()
+                            .AddTelegramBotClient()
+                            .AddAhRulesFile()
+                            .AddHostedService<Worker>();
                 });
     }
 }
