@@ -1,10 +1,11 @@
 ﻿using AhRulesBot.MessageProcessing.Interfaces;
+using AhRulesBot.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AhRulesBot.MessageProcessing
+namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
     public class RulesMessageHandler : IMessageHandler
     {
@@ -22,15 +23,17 @@ namespace AhRulesBot.MessageProcessing
             _next = next;
         }
 
-        public List<string> Handle(string message)
+        public HandlerResult Handle(string message)
         {
             var command = TryParseAsRulesRequest(message);
             if (command)
             {
-                return ProcessRulesRequest(message);
+                var result = new HandlerResult();
+                result.Data = ProcessRulesRequest(message);
+                return result;
             }
 
-            return _next != null ? _next.Handle(message) : new List<string>();
+            return _next != null ? _next.Handle(message) : new HandlerResult();
         }
 
         private List<string> ProcessRulesRequest(string message)
@@ -73,7 +76,7 @@ namespace AhRulesBot.MessageProcessing
             {
                 for (var j = 1; j <= source2Length; j++)
                 {
-                    var cost = (source2[j - 1] == source1[i - 1]) ? 0 : 1;
+                    var cost = source2[j - 1] == source1[i - 1] ? 0 : 1;
 
                     matrix[i, j] = Math.Min(
                         Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),

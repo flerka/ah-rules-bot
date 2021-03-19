@@ -1,5 +1,7 @@
+using AhRulesBot.BotRequestsProcessing;
+using AhRulesBot.BotRequestsProcessing.Interfaces;
 using AhRulesBot.Infrastructure;
-using AhRulesBot.MessageProcessing;
+using AhRulesBot.OldMessagesProcessing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +29,9 @@ namespace AhRulesBot
                             .AddSerilogLogging()
                             .AddTelegramBotClient()
                             .AddAhRulesFile()
-                            .AddHostedService<Worker>();
+                            .AddChannel()
+                            .AddHostedService<OldMessagesWorker>()
+                            .AddHostedService<BotRequestsWorker>();
                 });
     }
 }

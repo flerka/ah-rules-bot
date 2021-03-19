@@ -1,14 +1,18 @@
-﻿using AhRulesBot.Infrastructure;
+﻿using AhRulesBot.BotRequestsProcessing.Interfaces;
+using AhRulesBot.Infrastructure;
 using AhRulesBot.MessageProcessing.Interfaces;
+using AhRulesBot.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace AhRulesBot.MessageProcessing
+namespace AhRulesBot.BotRequestsProcessing
 {
     internal class TelegramMessageProcessor : ITelegramMessageProcessor
     {
@@ -17,21 +21,24 @@ namespace AhRulesBot.MessageProcessing
         private readonly ILogger _logger;
         private readonly IMessageHandler _textMessageHandler;
         private readonly AppConfig _config;
+        private readonly ChannelWriter<TelegramMessageInfo> _channel;
 
         public TelegramMessageProcessor(
             IMessageValidator messageValidator,
             ITelegramBotClient botClient, ILogger logger,
             IMessageHandler textMessageHandler,
-            AppConfig config)
+            AppConfig config,
+            ChannelWriter<TelegramMessageInfo> channel)
         {
             _messageValidator = messageValidator;
             _botClient = botClient;
             _logger = logger;
             _textMessageHandler = textMessageHandler;
             _config = config;
+            _channel = channel;
         }
 
-        public async Task Process(Message msg)
+        public async Task Process(Message msg, CancellationToken cancellationToken)
         {
             if (!await _messageValidator.IsValid(msg))
             {
@@ -49,7 +56,7 @@ namespace AhRulesBot.MessageProcessing
                     text = text.Remove(text.LastIndexOf(_config.BotName));
 
                 var result = _textMessageHandler.Handle(text);
-                await SendBatchMessagesToChat(msg.Chat.Id, result);
+                await SendBatchMessagesToChat(msg.Chat.Id, result.Data, result.Ttl);
             }
             catch (Exception e)
             {
@@ -60,13 +67,21 @@ namespace AhRulesBot.MessageProcessing
             }
         }
 
-        private async Task SendBatchMessagesToChat(long chatId, List<string> msgs)
+        private async Task SendBatchMessagesToChat(long chatId, List<string> msgs, TimeSpan? ttl = null)
         {
             if (msgs == null || msgs.Count == 0)
                 return;
 
             foreach (var msg in msgs)
-                await _botClient.SendTextMessageAsync(new ChatId(chatId), msg, ParseMode.Html);
+            {
+                var result = await _botClient.SendTextMessageAsync(new ChatId(chatId), msg, ParseMode.Html);
+                if (ttl.HasValue)
+                {
+                    await _channel.WriteAsync(new TelegramMessageInfo
+                    { ChatId = chatId, Id = result.MessageId, Ttl = ttl.Value, SentUtc = DateTime.UtcNow });
+                }
+            }
+
         }
     }
 }
