@@ -53,7 +53,7 @@ namespace AhRulesBot.Infrastructure
                 ctx => rules);
         }
 
-        internal static IServiceCollection AddChannel(this IServiceCollection services)
+        internal static IServiceCollection AddMsgToRemoveChannel(this IServiceCollection services)
         {
             services.AddSingleton<Channel<TelegramMessageInfo>>(Channel.CreateUnbounded<TelegramMessageInfo>(new UnboundedChannelOptions() {
                 SingleReader = true,

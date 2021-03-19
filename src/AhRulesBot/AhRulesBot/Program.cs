@@ -29,7 +29,7 @@ namespace AhRulesBot
                             .AddSerilogLogging()
                             .AddTelegramBotClient()
                             .AddAhRulesFile()
-                            .AddChannel()
+                            .AddMsgToRemoveChannel()
                             .AddHostedService<OldMessagesWorker>()
                             .AddHostedService<BotRequestsWorker>();
                 });

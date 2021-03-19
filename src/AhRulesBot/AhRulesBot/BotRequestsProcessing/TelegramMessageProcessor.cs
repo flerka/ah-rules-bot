@@ -56,7 +56,7 @@ namespace AhRulesBot.BotRequestsProcessing
                     text = text.Remove(text.LastIndexOf(_config.BotName));
 
                 var result = _textMessageHandler.Handle(text);
-                await SendBatchMessagesToChat(msg.Chat.Id, result.Data, result.Ttl);
+                await SendBatchMessagesToChat(msg.Chat.Id, result.Data, result.Ttl, cancellationToken);
             }
             catch (Exception e)
             {
@@ -67,14 +67,14 @@ namespace AhRulesBot.BotRequestsProcessing
             }
         }
 
-        private async Task SendBatchMessagesToChat(long chatId, List<string> msgs, TimeSpan? ttl = null)
+        private async Task SendBatchMessagesToChat(long chatId, List<string> msgs, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
         {
             if (msgs == null || msgs.Count == 0)
                 return;
 
             foreach (var msg in msgs)
             {
-                var result = await _botClient.SendTextMessageAsync(new ChatId(chatId), msg, ParseMode.Html);
+                var result = await _botClient.SendTextMessageAsync(new ChatId(chatId), msg, ParseMode.Html, cancellationToken: cancellationToken);
                 if (ttl.HasValue)
                 {
                     await _channel.WriteAsync(new TelegramMessageInfo
