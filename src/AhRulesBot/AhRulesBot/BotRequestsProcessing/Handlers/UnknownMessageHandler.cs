@@ -1,25 +1,27 @@
 ﻿using AhRulesBot.MessageProcessing.Interfaces;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 
-namespace AhRulesBot.MessageProcessing
+namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
     public class UnknownMessageHandler : IMessageHandler
     {
         private IMessageHandler _next;
         private const string UnknownResultMessage = "I didn't find any information";
+        private readonly TimeSpan TechMsgTtl = TimeSpan.FromMinutes(5);
 
         public UnknownMessageHandler(IMessageHandler next)
         {
             _next = next;
         }
 
-        public List<string> Handle(string message)
+        public HandlerResult Handle(string message)
         {
             var nextResult = _next.Handle(message);
-            if (!nextResult.Any())
+            if (!nextResult.Data.Any())
             {
-                return new List<string>() { UnknownResultMessage };
+                nextResult.Data.Add(UnknownResultMessage);
+                nextResult.Ttl = TechMsgTtl;
             }
 
             return nextResult;

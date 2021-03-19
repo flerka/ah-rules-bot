@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace AhRulesBot.MessageProcessing
+namespace AhRulesBot.BotRequestsProcessing.Interfaces
 {
     internal interface IMessageValidator
     {

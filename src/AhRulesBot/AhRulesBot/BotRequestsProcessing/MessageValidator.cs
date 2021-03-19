@@ -1,4 +1,6 @@
-﻿using AhRulesBot.Infrastructure;
+﻿using AhRulesBot.BotRequestsProcessing.Interfaces;
+using AhRulesBot.Infrastructure;
+using AhRulesBot.Models;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
@@ -8,7 +10,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace AhRulesBot.MessageProcessing
+namespace AhRulesBot.BotRequestsProcessing
 {
     internal class MessageValidator : IMessageValidator
     {

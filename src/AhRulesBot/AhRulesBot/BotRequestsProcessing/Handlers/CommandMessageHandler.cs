@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AhRulesBot.MessageProcessing
+namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
     public class CommandMessageHandler : IMessageHandler
     {
@@ -13,15 +13,15 @@ namespace AhRulesBot.MessageProcessing
             _next = next;
         }
 
-        public List<string> Handle(string message)
+        public HandlerResult Handle(string message)
         {
             var command = TryParseAsCommand(message);
             if (command)
             {
-                return ProcessCommand(command);
+                return new HandlerResult { Data = ProcessCommand(command) };
             }
 
-            return _next != null ? _next.Handle(message) : new List<string>();
+            return _next != null ? _next.Handle(message) : new HandlerResult();
         }
 
         private List<string> ProcessCommand(object command)

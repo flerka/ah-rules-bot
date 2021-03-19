@@ -1,5 +1,6 @@
-﻿using AhRulesBot.MessageProcessing;
+﻿using AhRulesBot.BotRequestsProcessing.Handlers;
 using AhRulesBot.MessageProcessing.Interfaces;
+using AhRulesBot.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Channels;
 using Telegram.Bot;
 
 namespace AhRulesBot.Infrastructure
@@ -49,6 +51,17 @@ namespace AhRulesBot.Infrastructure
 
             return services.AddSingleton<List<RuleItem>>(
                 ctx => rules);
+        }
+
+        internal static IServiceCollection AddMsgToRemoveChannel(this IServiceCollection services)
+        {
+            services.AddSingleton<Channel<TelegramMessageInfo>>(Channel.CreateUnbounded<TelegramMessageInfo>(new UnboundedChannelOptions() {
+                SingleReader = true,
+                SingleWriter = true,
+            }));
+            services.AddSingleton<ChannelReader<TelegramMessageInfo>>(svc => svc.GetRequiredService<Channel<TelegramMessageInfo>>().Reader);
+            services.AddSingleton<ChannelWriter<TelegramMessageInfo>>(svc => svc.GetRequiredService<Channel<TelegramMessageInfo>>().Writer);
+            return services;
         }
 
         internal static IServiceCollection AddMessageHandlers(this IServiceCollection services)

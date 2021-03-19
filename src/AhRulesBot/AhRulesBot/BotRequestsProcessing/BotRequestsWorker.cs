@@ -7,18 +7,18 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Extensions.Polling;
-using AhRulesBot.MessageProcessing;
+using AhRulesBot.BotRequestsProcessing.Interfaces;
 
-namespace AhRulesBot
+namespace AhRulesBot.BotRequestsProcessing
 {
-    public class Worker : BackgroundService
+    public class BotRequestsWorker : BackgroundService
     {
         private readonly ITelegramBotClient _botClient;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly ILogger _logger;
         private readonly ITelegramMessageProcessor _telegramMessageProcessor;
 
-        public Worker(
+        public BotRequestsWorker(
             ILogger logger,
             ITelegramBotClient botClient,
             IHostApplicationLifetime hostApplicationLifetime,
@@ -42,12 +42,12 @@ namespace AhRulesBot
 
                 await foreach (Update update in updateReceiver.YieldUpdatesAsync())
                 {
-                    await _telegramMessageProcessor.Process(update.Message);
+                    await _telegramMessageProcessor.Process(update.Message, stoppingToken);
                 }
             }
             catch (Exception e)
             {
-                _logger.Error(e, "{nameof(Worker)}.{nameof(ExecuteAsync)} Some unhandled error occurred, stopping application.");
+                _logger.Error(e, "{Class}.{Method} Some unhandled error occurred, stopping application.", nameof(BotRequestsWorker), nameof(ExecuteAsync));
                 _hostApplicationLifetime.StopApplication();
             }
         }

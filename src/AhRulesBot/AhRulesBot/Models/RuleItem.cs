@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AhRulesBot
+namespace AhRulesBot.Models
 {
     public class RuleItem
     {
