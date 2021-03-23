@@ -30,8 +30,10 @@ namespace AhRulesBot
                             .AddTelegramBotClient()
                             .AddAhRulesFile()
                             .AddMsgToRemoveChannel()
+                            .AddCustomRulesChannel()
                             .AddHostedService<OldMessagesWorker>()
-                            .AddHostedService<BotRequestsWorker>();
+                            .AddHostedService<BotRequestsWorker>()
+                            .AddHostedService<CustomRulesWorker>();                    
                 });
     }
 }

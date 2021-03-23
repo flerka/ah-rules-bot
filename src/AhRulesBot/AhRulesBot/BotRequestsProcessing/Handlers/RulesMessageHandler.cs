@@ -28,9 +28,11 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             var command = TryParseAsRulesRequest(message);
             if (command)
             {
-                var result = new HandlerResult();
-                result.Data = ProcessRulesRequest(message);
-                return result;
+                var processRequest = ProcessRulesRequest(message);
+                if (processRequest != null && processRequest.Count != 0)
+                {
+                    return new HandlerResult { Data = processRequest };
+                }
             }
 
             return _next != null ? _next.Handle(message) : new HandlerResult();

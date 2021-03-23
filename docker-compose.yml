@@ -13,6 +13,8 @@ services:
       AhRulesBot_BotAdminId: "ID"
       AhRulesBot_ApiKey: "KEY"
       AhRulesBot_BotName: "@MYBOT"
+      AhRulesBot_GoogleCredFilePath: "filepath"
+      AhRulesBot_GoogleFileId: "ID"
     networks:
       - rpi
     restart: unless-stopped

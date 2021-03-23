@@ -64,10 +64,24 @@ namespace AhRulesBot.Infrastructure
             return services;
         }
 
+        internal static IServiceCollection AddCustomRulesChannel(this IServiceCollection services)
+        {
+            services.AddSingleton<Channel<List<CustomRuleItem>>>(Channel.CreateUnbounded<List<CustomRuleItem>>(new UnboundedChannelOptions()
+            {
+                SingleReader = true,
+                SingleWriter = true,
+            }));
+            services.AddSingleton<ChannelReader<List<CustomRuleItem>>>(svc => svc.GetRequiredService<Channel<List<CustomRuleItem>>>().Reader);
+            services.AddSingleton<ChannelWriter<List<CustomRuleItem>>>(svc => svc.GetRequiredService<Channel<List<CustomRuleItem>>>().Writer);
+            return services;
+        }
+
         internal static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
+            services.AddSingleton<CustomRulesMessageHandler>(
+                x => new CustomRulesMessageHandler(x.GetRequiredService<ILogger>(), x.GetRequiredService<ChannelReader<List<CustomRuleItem>>>(), null));
             services.AddSingleton<RulesMessageHandler>(
-                x => new RulesMessageHandler(x.GetRequiredService<ILogger>(), x.GetRequiredService<List<RuleItem>>(), null));
+                x => new RulesMessageHandler(x.GetRequiredService<ILogger>(), x.GetRequiredService<List<RuleItem>>(), x.GetRequiredService<CustomRulesMessageHandler>()));
             services.AddSingleton<CommandMessageHandler>(
                 x => new CommandMessageHandler(x.GetRequiredService<RulesMessageHandler>()));
             services.AddSingleton<UnknownMessageHandler>(
