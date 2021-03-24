@@ -1,6 +1,7 @@
 using AhRulesBot.BotRequestsProcessing;
 using AhRulesBot.BotRequestsProcessing.Interfaces;
 using AhRulesBot.Infrastructure;
+using AhRulesBot.Infrastructure.ServiceCollectionExtensions;
 using AhRulesBot.OldMessagesProcessing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,9 +32,10 @@ namespace AhRulesBot
                             .AddAhRulesFile()
                             .AddMsgToRemoveChannel()
                             .AddCustomRulesChannel()
+                            .AddRulesDriveService()
                             .AddHostedService<OldMessagesWorker>()
                             .AddHostedService<BotRequestsWorker>()
-                            .AddHostedService<CustomRulesWorker>();                    
+                            .AddHostedService<CustomRulesWorker>();
                 });
     }
 }

@@ -15,6 +15,7 @@ services:
       AhRulesBot_BotName: "@MYBOT"
       AhRulesBot_GoogleCredFilePath: "filepath"
       AhRulesBot_GoogleFileId: "ID"
+      RulesFilePath: "rules_json_location"
     networks:
       - rpi
     restart: unless-stopped

@@ -8,12 +8,13 @@ using System.Threading.Channels;
 
 namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
-    public class CustomRulesMessageHandler : IMessageHandler
+    internal class CustomRulesMessageHandler : IMessageHandler
     {
-        private IMessageHandler _next;
+        private readonly IMessageHandler _next;
         private readonly ChannelReader<List<CustomRuleItem>> _channel;
-        private List<CustomRuleItem> CustomRules = new List<CustomRuleItem>();
         private readonly ILogger _logger;
+
+        private List<CustomRuleItem> CustomRules = new List<CustomRuleItem>();
 
         public CustomRulesMessageHandler(
             ILogger logger,
@@ -30,9 +31,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             var command = TryParseAsCustomRulesRequest(message);
             if (command)
             {
-                var result = new HandlerResult();
-                result.Data = ProcessRulesRequest(message);
-                return result;
+                return new HandlerResult { Data = ProcessRulesRequest(message) };
             }
 
             return _next != null ? _next.Handle(message) : new HandlerResult();
@@ -47,7 +46,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
 
             return CustomRules.Where(messageContains)
                 .OrderByDescending(messageExact)
-                //.ThenBy(i => CalcLevenshteinDistance(message, i.Title))
+                .ThenBy(i => message.CalcLevenshteinDistance(i.Title))
                 .Select(i => $"<b>{i.Title}</b>\n{i.Text}").ToList();
         }
 

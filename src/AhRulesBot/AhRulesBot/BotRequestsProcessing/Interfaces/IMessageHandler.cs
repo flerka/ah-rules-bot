@@ -1,9 +1,8 @@
 ﻿using AhRulesBot.BotRequestsProcessing;
-using System.Collections.Generic;
 
 namespace AhRulesBot.MessageProcessing.Interfaces
 {
-    public interface IMessageHandler
+    internal interface IMessageHandler
     {
         public HandlerResult Handle(string message);
     }
