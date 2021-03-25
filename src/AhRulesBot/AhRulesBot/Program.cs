@@ -30,6 +30,7 @@ namespace AhRulesBot
                             .AddSerilogLogging()
                             .AddTelegramBotClient()
                             .AddAhRulesFile()
+                            .AddCardsFile()
                             .AddMsgToRemoveChannel()
                             .AddCustomRulesChannel()
                             .AddRulesDriveService()

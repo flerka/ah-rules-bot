@@ -14,5 +14,6 @@ namespace AhRulesBot.Infrastructure
         public string GoogleFileId { get; set; }
 
         public string RulesFilePath { get; set; }
+        public string CardsFilePath { get; set; }
     }
 }

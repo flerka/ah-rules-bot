@@ -42,7 +42,11 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             Func<CustomRuleItem, bool> messageContains = item => item.Title.Contains(message, StringComparison.InvariantCultureIgnoreCase);
             Func<CustomRuleItem, bool> messageExact = item => item.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase);
 
-            _channel.TryRead(out CustomRules);
+            _channel.TryRead(out List<CustomRuleItem> rulesUpdate);
+            if (rulesUpdate != null)
+            {
+                CustomRules = rulesUpdate;
+            }
 
             return CustomRules.Where(messageContains)
                 .OrderByDescending(messageExact)
