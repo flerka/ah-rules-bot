@@ -1,10 +1,12 @@
 ﻿using AhRulesBot.BotRequestsProcessing.Interfaces;
 using AhRulesBot.Infrastructure;
 using AhRulesBot.Models;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -14,11 +16,17 @@ namespace AhRulesBot.BotRequestsProcessing
 {
     internal class MessageValidator : IMessageValidator
     {
-        private static readonly ConcurrentDictionary<int, bool> usersCache = new ConcurrentDictionary<int, bool>();
-
         private readonly AppConfig _config;
         private readonly ITelegramBotClient _botClient;
         private readonly ILogger _logger;
+
+        private readonly ConcurrentDictionary<int, bool> _usersCache = new ConcurrentDictionary<int, bool>();
+        private readonly MemoryCache _requestsCache = new MemoryCache(new MemoryCacheOptions());
+        private readonly MemoryCache _bannedCache = new MemoryCache(new MemoryCacheOptions());
+        private readonly TimeSpan _requestCacheTimeout = TimeSpan.FromMinutes(2);
+        private readonly TimeSpan _bannedCacheTimeout = TimeSpan.FromMinutes(5);
+
+        private const int MaxMessagesInMinute = 5;
 
         public MessageValidator(
             ILogger logger,
@@ -46,7 +54,35 @@ namespace AhRulesBot.BotRequestsProcessing
             if (DateTime.UtcNow.Subtract(message.Date).TotalMinutes > 4)
                 return false;
 
+            if (IsSpamming(message))
+            {
+                return false;
+            }
+
             return true;
+        }
+
+        private bool IsSpamming(Message message)
+        {
+            var bannedCacheKey = $"{message.From.Id}";
+            var requestCacheKey = $"{message.From.Id}_{DateTime.UtcNow.ToString("H: mm", CultureInfo.InvariantCulture)}";
+
+            if (_bannedCache.TryGetValue(bannedCacheKey, out bool isBanned) && isBanned)
+            {
+                return true;
+            }
+
+            _requestsCache.TryGetValue(requestCacheKey, out int value);
+            value++;
+            _requestsCache.Set(requestCacheKey, value, new MemoryCacheEntryOptions().SetAbsoluteExpiration(_requestCacheTimeout));
+
+            if (value > MaxMessagesInMinute)
+            {
+                _bannedCache.Set(bannedCacheKey, true, new MemoryCacheEntryOptions().SetAbsoluteExpiration(_bannedCacheTimeout));
+                return true;
+            }
+
+            return false;
         }
 
         private async Task<bool> IsValidSender(Message message)
@@ -54,13 +90,13 @@ namespace AhRulesBot.BotRequestsProcessing
             if (message.Chat.Type == ChatType.Private)
             {
                 var isAllowed = false;
-                if (!usersCache.TryGetValue(message.From.Id, out isAllowed))
+                if (!_usersCache.TryGetValue(message.From.Id, out isAllowed))
                 {
                     try
                     {
                         var member = await _botClient.GetChatMemberAsync(_config.TestChatId, message.From.Id);
                         isAllowed = member != null && member.Status != ChatMemberStatus.Left;
-                        usersCache.TryAdd(message.From.Id, isAllowed);
+                        _usersCache.TryAdd(message.From.Id, isAllowed);
                     }
                     catch
                     {
