@@ -11,21 +11,21 @@ using System.Linq;
 using System.Globalization;
 using CsvHelper;
 using System.Threading.Channels;
-using AhRulesBot.CustomRulesImport;
+using AhRulesBot.BotRequestsProcessing.Interfaces;
 
-namespace AhRulesBot.OldMessagesProcessing
+namespace AhRulesBot.CustomRulesImport
 {
     internal class CustomRulesWorker : BackgroundService
     {
         private readonly ILogger _logger;
-        private readonly RulesDriveService _rulesDriveService;
+        private readonly IDriveService _rulesDriveService;
         private readonly ChannelWriter<List<CustomRuleItem>> _channel;
         private readonly AppConfig _config;
 
         public CustomRulesWorker(
             ILogger logger,
             AppConfig config,
-            RulesDriveService rulesDriveService,
+            IDriveService rulesDriveService,
             ChannelWriter<List<CustomRuleItem>> channel)
         {
             _channel = channel;

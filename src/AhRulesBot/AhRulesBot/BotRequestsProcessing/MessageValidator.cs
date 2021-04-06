@@ -23,7 +23,7 @@ namespace AhRulesBot.BotRequestsProcessing
         private readonly ConcurrentDictionary<int, bool> _usersCache = new ConcurrentDictionary<int, bool>();
         private readonly MemoryCache _requestsCache = new MemoryCache(new MemoryCacheOptions());
         private readonly MemoryCache _bannedCache = new MemoryCache(new MemoryCacheOptions());
-        private readonly TimeSpan _requestCacheTimeout = TimeSpan.FromMinutes(2);
+        private readonly TimeSpan _requestCacheExpiration = TimeSpan.FromMinutes(2);
         private readonly TimeSpan _bannedCacheTimeout = TimeSpan.FromMinutes(5);
 
         private const int MaxMessagesInMinute = 5;
@@ -74,7 +74,7 @@ namespace AhRulesBot.BotRequestsProcessing
 
             _requestsCache.TryGetValue(requestCacheKey, out int value);
             value++;
-            _requestsCache.Set(requestCacheKey, value, new MemoryCacheEntryOptions().SetAbsoluteExpiration(_requestCacheTimeout));
+            _requestsCache.Set(requestCacheKey, value, new MemoryCacheEntryOptions().SetAbsoluteExpiration(_requestCacheExpiration));
 
             if (value > MaxMessagesInMinute)
             {
