@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace AhRulesBot.BotRequestsProcessing.Interfaces
+namespace AhRulesBot.BotRequestsProcessing
 {
     internal interface ITelegramMessageProcessor
     {

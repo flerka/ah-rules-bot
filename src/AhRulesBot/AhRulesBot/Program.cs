@@ -1,5 +1,6 @@
 using AhRulesBot.BotRequestsProcessing;
 using AhRulesBot.BotRequestsProcessing.Interfaces;
+using AhRulesBot.BotRequestsProcessing.Validators;
 using AhRulesBot.CustomRulesImport;
 using AhRulesBot.Infrastructure;
 using AhRulesBot.Infrastructure.ServiceCollectionExtensions;

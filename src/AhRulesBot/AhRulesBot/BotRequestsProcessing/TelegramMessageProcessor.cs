@@ -1,6 +1,6 @@
-﻿using AhRulesBot.BotRequestsProcessing.Interfaces;
+﻿using AhRulesBot.BotRequestsProcessing.Handlers;
+using AhRulesBot.BotRequestsProcessing.Interfaces;
 using AhRulesBot.Infrastructure;
-using AhRulesBot.MessageProcessing.Interfaces;
 using AhRulesBot.Models;
 using Serilog;
 using System;
@@ -40,8 +40,13 @@ namespace AhRulesBot.BotRequestsProcessing
 
         public async Task Process(Message msg, CancellationToken cancellationToken)
         {
-            if (!await _messageValidator.IsValid(msg))
+            var validationResult = await _messageValidator.IsValid(msg);
+            if (!validationResult.IsValid)
             {
+                if (!string.IsNullOrEmpty(validationResult.ValidationMessage))
+                {
+                    await SendMessageToChat(msg.Chat.Id, validationResult.ValidationMessage, TimeSpan.FromMinutes(5), cancellationToken);
+                }
                 return;
             }
 
@@ -65,6 +70,11 @@ namespace AhRulesBot.BotRequestsProcessing
                     "Something went wrong. {Username} {Id}: {Text}",
                     msg.From.Username, msg.From.Id, msg.Text);
             }
+        }
+
+        private async Task SendMessageToChat(long chatId, string msg, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
+        {
+            await SendBatchMessagesToChat(chatId, new List<string> { msg }, ttl, cancellationToken);
         }
 
         private async Task SendBatchMessagesToChat(long chatId, List<string> msgs, TimeSpan? ttl = null, CancellationToken cancellationToken = default)

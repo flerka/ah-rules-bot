@@ -1,5 +1,4 @@
-﻿using AhRulesBot.MessageProcessing.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace AhRulesBot.BotRequestsProcessing.Handlers

@@ -12,7 +12,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace AhRulesBot.BotRequestsProcessing
+namespace AhRulesBot.BotRequestsProcessing.Validators
 {
     internal class MessageValidator : IMessageValidator
     {
@@ -39,37 +39,32 @@ namespace AhRulesBot.BotRequestsProcessing
             _botClient = botClient;
         }
 
-        public async Task<bool> IsValid(Message message)
+        public async Task<ValidatorResult> IsValid(Message message)
         {
             if (string.IsNullOrEmpty(message?.Text))
-                return false;
+                return new InvalidResult();
 
             // Only commands should be processed
             if (!message.Text.StartsWith('/'))
-                return false;
+                return new InvalidResult();
 
             if (!await IsValidSender(message))
-                return false;
+                return new InvalidResult();
 
             if (DateTime.UtcNow.Subtract(message.Date).TotalMinutes > 4)
-                return false;
+                return new InvalidResult();
 
-            if (IsSpamming(message))
-            {
-                return false;
-            }
-
-            return true;
+            return IsSpamming(message);
         }
 
-        private bool IsSpamming(Message message)
+        private ValidatorResult IsSpamming(Message message)
         {
             var bannedCacheKey = $"{message.From.Id}";
             var requestCacheKey = $"{message.From.Id}_{DateTime.UtcNow.ToString("H: mm", CultureInfo.InvariantCulture)}";
 
             if (_bannedCache.TryGetValue(bannedCacheKey, out bool isBanned) && isBanned)
             {
-                return true;
+                return new InvalidResult();
             }
 
             _requestsCache.TryGetValue(requestCacheKey, out int value);
@@ -79,10 +74,10 @@ namespace AhRulesBot.BotRequestsProcessing
             if (value > MaxMessagesInMinute)
             {
                 _bannedCache.Set(bannedCacheKey, true, new MemoryCacheEntryOptions().SetAbsoluteExpiration(_bannedCacheTimeout));
-                return true;
+                return new InvalidResult($"@{message.From.Username} you made too many requests. Wait 5 minutes.");
             }
 
-            return false;
+            return new ValidResult();
         }
 
         private async Task<bool> IsValidSender(Message message)

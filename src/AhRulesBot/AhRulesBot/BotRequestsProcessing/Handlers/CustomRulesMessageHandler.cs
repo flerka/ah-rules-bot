@@ -1,5 +1,4 @@
-﻿using AhRulesBot.MessageProcessing.Interfaces;
-using AhRulesBot.Models;
+﻿using AhRulesBot.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
