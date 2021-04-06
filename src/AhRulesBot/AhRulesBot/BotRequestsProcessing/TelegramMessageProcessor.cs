@@ -51,6 +51,10 @@ namespace AhRulesBot.BotRequestsProcessing
             {
                 // parse command symbol
                 var text = msg.Text.Remove(0, 1);
+                if (string.IsNullOrEmpty(text))
+                {
+                    return;
+                }
 
                 if (text.EndsWith(_config.BotName))
                     text = text.Remove(text.LastIndexOf(_config.BotName));
