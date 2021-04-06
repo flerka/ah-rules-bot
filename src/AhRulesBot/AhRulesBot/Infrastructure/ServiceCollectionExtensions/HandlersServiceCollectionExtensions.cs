@@ -1,4 +1,5 @@
 ﻿using AhRulesBot.BotRequestsProcessing.Handlers;
+using AhRulesBot.MessageProcessing.Interfaces;
 using AhRulesBot.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;

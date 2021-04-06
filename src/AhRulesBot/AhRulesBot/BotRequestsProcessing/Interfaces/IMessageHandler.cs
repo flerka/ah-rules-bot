@@ -1,4 +1,6 @@
-﻿namespace AhRulesBot.BotRequestsProcessing.Handlers
+﻿using AhRulesBot.BotRequestsProcessing;
+
+namespace AhRulesBot.MessageProcessing.Interfaces
 {
     internal interface IMessageHandler
     {
