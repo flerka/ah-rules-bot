@@ -87,28 +87,29 @@ namespace AhRulesBot.BotRequestsProcessing
 
         private async Task<bool> IsValidSender(Message message)
         {
-            if (message.Chat.Type == ChatType.Private)
+            if (message.Chat.Type != ChatType.Private)
             {
-                var isAllowed = false;
-                if (!_usersCache.TryGetValue(message.From.Id, out isAllowed))
-                {
-                    try
-                    {
-                        var member = await _botClient.GetChatMemberAsync(_config.TestChatId, message.From.Id);
-                        isAllowed = member != null && member.Status != ChatMemberStatus.Left;
-                        _usersCache.TryAdd(message.From.Id, isAllowed);
-                    }
-                    catch
-                    {
-                        _logger.Warning($"Can't verify if user is member of the group. {_config.TestChatId}, {message.From.Id}");
-                    }
-                }
+                return message.Chat.Id == _config.AHChatId || message.Chat.Id == _config.TestChatId;
+            }
 
-
+            var isAllowed = false;
+            if (!_usersCache.TryGetValue(message.From.Id, out isAllowed))
+            {
                 return isAllowed;
             }
 
-            return message.Chat.Id == _config.AHChatId || message.Chat.Id == _config.TestChatId;
+            try
+            {
+                var member = await _botClient.GetChatMemberAsync(_config.TestChatId, message.From.Id);
+                isAllowed = member != null && member.Status != ChatMemberStatus.Left;
+                _usersCache.TryAdd(message.From.Id, isAllowed);
+            }
+            catch
+            {
+                _logger.Warning($"Can't verify if user is member of the group. {_config.TestChatId}, {message.From.Id}");
+            }
+
+            return isAllowed;
         }
     }
 }
