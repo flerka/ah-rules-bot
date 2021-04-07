@@ -1,12 +1,11 @@
-﻿using AhRulesBot.MessageProcessing.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
-    public class CommandMessageHandler : IMessageHandler
+    internal class CommandMessageHandler : IMessageHandler
     {
-        private IMessageHandler _next;
+        private readonly IMessageHandler _next;
 
         public CommandMessageHandler(IMessageHandler next)
         {

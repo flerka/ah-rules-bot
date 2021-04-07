@@ -1,10 +1,9 @@
-﻿using AhRulesBot.MessageProcessing.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
-    public class LongMessageHandler : IMessageHandler
+    internal class LongMessageHandler : IMessageHandler
     {
         private IMessageHandler _next;
 

@@ -7,12 +7,16 @@ services:
     image: flerkam/ah-rules-bot:latest
     volumes:
      - ./rules.json:/app/rules.json
+     - ./google-cred.json:/app/google-cred.json.json
     environment:
       AhRulesBot_TestChatId: "ID"
       AhRulesBot_AHChatId: "ID"
       AhRulesBot_BotAdminId: "ID"
       AhRulesBot_ApiKey: "KEY"
       AhRulesBot_BotName: "@MYBOT"
+      AhRulesBot_GoogleCredFilePath: "filepath"
+      AhRulesBot_GoogleFileId: "ID"
+      AhRulesBot_RulesFilePath: "rules_json_location"
     networks:
       - rpi
     restart: unless-stopped

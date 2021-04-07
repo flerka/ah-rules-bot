@@ -11,7 +11,7 @@ using AhRulesBot.BotRequestsProcessing.Interfaces;
 
 namespace AhRulesBot.BotRequestsProcessing
 {
-    public class BotRequestsWorker : BackgroundService
+    internal class BotRequestsWorker : BackgroundService
     {
         private readonly ITelegramBotClient _botClient;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;

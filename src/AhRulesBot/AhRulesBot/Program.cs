@@ -1,6 +1,9 @@
 using AhRulesBot.BotRequestsProcessing;
 using AhRulesBot.BotRequestsProcessing.Interfaces;
+using AhRulesBot.BotRequestsProcessing.Validators;
+using AhRulesBot.CustomRulesImport;
 using AhRulesBot.Infrastructure;
+using AhRulesBot.Infrastructure.ServiceCollectionExtensions;
 using AhRulesBot.OldMessagesProcessing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,8 +33,11 @@ namespace AhRulesBot
                             .AddTelegramBotClient()
                             .AddAhRulesFile()
                             .AddMsgToRemoveChannel()
+                            .AddCustomRulesChannel()
+                            .AddRulesDriveService()
                             .AddHostedService<OldMessagesWorker>()
-                            .AddHostedService<BotRequestsWorker>();
+                            .AddHostedService<BotRequestsWorker>()
+                            .AddHostedService<CustomRulesWorker>();
                 });
     }
 }

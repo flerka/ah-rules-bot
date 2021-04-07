@@ -1,14 +1,14 @@
-﻿using AhRulesBot.MessageProcessing.Interfaces;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
-    public class UnknownMessageHandler : IMessageHandler
+    internal class UnknownMessageHandler : IMessageHandler
     {
-        private IMessageHandler _next;
-        private const string UnknownResultMessage = "I didn't find any information";
+        private readonly IMessageHandler _next;
         private readonly TimeSpan TechMsgTtl = TimeSpan.FromMinutes(5);
+
+        private const string UnknownResultMessage = "I didn't find any information";
 
         public UnknownMessageHandler(IMessageHandler next)
         {
