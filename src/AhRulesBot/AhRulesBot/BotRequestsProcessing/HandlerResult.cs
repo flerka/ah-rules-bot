@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AhRulesBot.BotRequestsProcessing.Handlers
+namespace AhRulesBot.BotRequestsProcessing
 {
     public class HandlerResult
     {

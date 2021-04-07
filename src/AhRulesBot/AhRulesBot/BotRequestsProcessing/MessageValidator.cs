@@ -12,7 +12,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace AhRulesBot.BotRequestsProcessing.Validators
+namespace AhRulesBot.BotRequestsProcessing
 {
     internal class MessageValidator : IMessageValidator
     {
@@ -39,32 +39,37 @@ namespace AhRulesBot.BotRequestsProcessing.Validators
             _botClient = botClient;
         }
 
-        public async Task<ValidatorResult> IsValid(Message message)
+        public async Task<bool> IsValid(Message message)
         {
             if (string.IsNullOrEmpty(message?.Text))
-                return new InvalidResult();
+                return false;
 
             // Only commands should be processed
             if (!message.Text.StartsWith('/'))
-                return new InvalidResult();
+                return false;
 
             if (!await IsValidSender(message))
-                return new InvalidResult();
+                return false;
 
             if (DateTime.UtcNow.Subtract(message.Date).TotalMinutes > 4)
-                return new InvalidResult();
+                return false;
 
-            return IsSpamming(message);
+            if (IsSpamming(message))
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        private ValidatorResult IsSpamming(Message message)
+        private bool IsSpamming(Message message)
         {
             var bannedCacheKey = $"{message.From.Id}";
             var requestCacheKey = $"{message.From.Id}_{DateTime.UtcNow.ToString("H: mm", CultureInfo.InvariantCulture)}";
 
             if (_bannedCache.TryGetValue(bannedCacheKey, out bool isBanned) && isBanned)
             {
-                return new InvalidResult();
+                return true;
             }
 
             _requestsCache.TryGetValue(requestCacheKey, out int value);
@@ -74,10 +79,10 @@ namespace AhRulesBot.BotRequestsProcessing.Validators
             if (value > MaxMessagesInMinute)
             {
                 _bannedCache.Set(bannedCacheKey, true, new MemoryCacheEntryOptions().SetAbsoluteExpiration(_bannedCacheTimeout));
-                return new InvalidResult($"@{message.From.Username} you made too many requests. Wait 5 minutes.");
+                return true;
             }
 
-            return new ValidResult();
+            return false;
         }
 
         private async Task<bool> IsValidSender(Message message)
