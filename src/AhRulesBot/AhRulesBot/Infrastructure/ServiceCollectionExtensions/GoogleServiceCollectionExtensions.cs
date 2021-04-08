@@ -1,4 +1,5 @@
-﻿using AhRulesBot.CustomRulesImport;
+﻿using AhRulesBot.BotRequestsProcessing.Interfaces;
+using AhRulesBot.CustomRulesImport;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Docs.v1;
 using Google.Apis.Services;
@@ -13,7 +14,7 @@ namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
     {
         public static IServiceCollection AddRulesDriveService(this IServiceCollection services)
         {
-            return services.AddSingleton(x => GetDrive(x.GetService<AppConfig>().GoogleCredFilePath));
+            return services.AddSingleton<IDriveService>(x => GetDrive(x.GetService<AppConfig>().GoogleCredFilePath));
         }
 
         private static RulesDriveService GetDrive(string googleCredPath)

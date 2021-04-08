@@ -25,7 +25,7 @@ namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
                 .WriteTo.Console(new RenderedCompactJsonFormatter())
                 .CreateLogger();
 
-            services.AddSingleton(Log.Logger);
+            services.AddSingleton<ILogger>(Log.Logger);
             return services;
         }
     }
