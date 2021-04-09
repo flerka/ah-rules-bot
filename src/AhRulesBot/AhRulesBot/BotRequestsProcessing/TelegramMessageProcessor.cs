@@ -82,7 +82,7 @@ namespace AhRulesBot.BotRequestsProcessing
                 if (ttl.HasValue)
                 {
                     await _channel.WriteAsync(new TelegramMessageInfo
-                    { ChatId = chatId, Id = result.MessageId, Ttl = ttl.Value, SentUtc = DateTime.UtcNow });
+                    { ChatId = chatId, Id = result.MessageId, Ttl = ttl.Value, SentUtc = DateTime.UtcNow }, cancellationToken);
                 }
             }
 

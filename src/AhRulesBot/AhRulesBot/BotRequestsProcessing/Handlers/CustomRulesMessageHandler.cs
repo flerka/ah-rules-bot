@@ -12,23 +12,20 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
     {
         private readonly IMessageHandler _next;
         private readonly ChannelReader<List<CustomRuleItem>> _channel;
-        private readonly ILogger _logger;
 
-        private List<CustomRuleItem> CustomRules = new List<CustomRuleItem>();
+        private List<CustomRuleItem> CustomRules = new();
 
         public CustomRulesMessageHandler(
-            ILogger logger,
             ChannelReader<List<CustomRuleItem>> channel,
             IMessageHandler next)
         {
-            _logger = logger;
             _channel = channel;
             _next = next;
         }
 
         public HandlerResult Handle(string message)
         {
-            var command = TryParseAsCustomRulesRequest(message);
+            var command = TryParseAsCustomRulesRequest();
             if (command)
             {
                 return new HandlerResult { Data = ProcessRulesRequest(message) };
@@ -39,8 +36,8 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
 
         private List<string> ProcessRulesRequest(string message)
         {
-            Func<CustomRuleItem, bool> messageContains = item => item.Title.Contains(message, StringComparison.InvariantCultureIgnoreCase);
-            Func<CustomRuleItem, bool> messageExact = item => item.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase);
+            bool messageContains(CustomRuleItem item) => item.Title.Contains(message, StringComparison.InvariantCultureIgnoreCase);
+            bool messageExact(CustomRuleItem item) => item.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase);
 
             while (_channel.TryRead(out List<CustomRuleItem> rulesUpdate) && rulesUpdate != null)
             {
@@ -53,7 +50,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
                 .Select(i => $"<b>{i.Title}</b>\n{i.Text}").ToList();
         }
 
-        private bool TryParseAsCustomRulesRequest(string message)
+        private static bool TryParseAsCustomRulesRequest()
         {
             return true;
         }

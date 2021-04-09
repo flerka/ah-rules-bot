@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>dotnet-AhRulesBot-EC3FDE7F-EBAD-4547-B1F4-D27CED669026</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

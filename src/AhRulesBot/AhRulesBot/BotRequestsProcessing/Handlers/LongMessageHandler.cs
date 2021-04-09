@@ -6,7 +6,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
     internal class LongMessageHandler : IMessageHandler
     {
-        private IMessageHandler _next;
+        private readonly IMessageHandler _next;
 
         public LongMessageHandler(IMessageHandler next)
         {

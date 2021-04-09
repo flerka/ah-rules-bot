@@ -15,7 +15,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
 
         public HandlerResult Handle(string message)
         {
-            var command = TryParseAsCommand(message);
+            var command = TryParseAsCommand();
             if (command)
             {
                 return new HandlerResult { Data = ProcessCommand(command) };
@@ -29,7 +29,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             throw new NotImplementedException();
         }
 
-        private bool TryParseAsCommand(string message)
+        private static bool TryParseAsCommand()
         {
             return false;
         }
