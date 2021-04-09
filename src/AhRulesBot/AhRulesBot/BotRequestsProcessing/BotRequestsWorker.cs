@@ -34,11 +34,11 @@ namespace AhRulesBot.BotRequestsProcessing
         {
             try
             {
-                var botName = await _botClient.GetMeAsync();
+                var botName = await _botClient.GetMeAsync(stoppingToken);
                 _logger.Information($"Bot's name: {botName.FirstName}");
 
                 var updateReceiver = new QueuedUpdateReceiver(_botClient);
-                updateReceiver.StartReceiving(new UpdateType[] { UpdateType.Message });
+                updateReceiver.StartReceiving(new UpdateType[] { UpdateType.Message }, cancellationToken: stoppingToken);
 
                 await foreach (Update update in updateReceiver.YieldUpdatesAsync())
                 {

@@ -16,7 +16,7 @@ namespace AhRulesBot.OldMessagesProcessing
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly ILogger _logger;
         private readonly ChannelReader<TelegramMessageInfo> _channel;
-        private readonly ConcurrentQueue<TelegramMessageInfo> _messagesToDelete = new ConcurrentQueue<TelegramMessageInfo>();
+        private readonly ConcurrentQueue<TelegramMessageInfo> _messagesToDelete = new();
 
         public OldMessagesWorker(
             ILogger logger,
