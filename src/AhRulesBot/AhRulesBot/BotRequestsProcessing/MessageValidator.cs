@@ -20,9 +20,9 @@ namespace AhRulesBot.BotRequestsProcessing
         private readonly ITelegramBotClient _botClient;
         private readonly ILogger _logger;
 
-        private readonly ConcurrentDictionary<int, bool> _usersCache = new ConcurrentDictionary<int, bool>();
-        private readonly MemoryCache _requestsCache = new MemoryCache(new MemoryCacheOptions());
-        private readonly MemoryCache _bannedCache = new MemoryCache(new MemoryCacheOptions());
+        private readonly ConcurrentDictionary<int, bool> _usersCache = new();
+        private readonly MemoryCache _requestsCache = new(new MemoryCacheOptions());
+        private readonly MemoryCache _bannedCache = new(new MemoryCacheOptions());
         private readonly TimeSpan _requestCacheExpiration = TimeSpan.FromMinutes(2);
         private readonly TimeSpan _bannedCacheTimeout = TimeSpan.FromMinutes(5);
 
@@ -31,8 +31,7 @@ namespace AhRulesBot.BotRequestsProcessing
         public MessageValidator(
             ILogger logger,
             AppConfig config,
-            ITelegramBotClient botClient,
-            List<RuleItem> rules)
+            ITelegramBotClient botClient)
         {
             _logger = logger;
             _config = config;
@@ -92,8 +91,7 @@ namespace AhRulesBot.BotRequestsProcessing
                 return message.Chat.Id == _config.AHChatId || message.Chat.Id == _config.TestChatId;
             }
 
-            var isAllowed = false;
-            if (!_usersCache.TryGetValue(message.From.Id, out isAllowed))
+            if (!_usersCache.TryGetValue(message.From.Id, out bool isAllowed))
             {
                 return isAllowed;
             }
