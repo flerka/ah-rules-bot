@@ -4,18 +4,18 @@ namespace AhRulesBot.Models
 {
     public class RuleItem
     {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public string Text { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
     }
 
     public class SubRule : RuleItem
     {
-        public IList<RuleItem> Rules { get; set; }
+        public List<RuleItem> Rules { get; set; } = new();
     }
 
     public class Rule : RuleItem
     {
-        public IList<SubRule> Rules { get; set; }
+        public List<SubRule> Rules { get; set; } = new();
     }
 }
