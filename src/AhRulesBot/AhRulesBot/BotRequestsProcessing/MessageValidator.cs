@@ -93,14 +93,14 @@ namespace AhRulesBot.BotRequestsProcessing
             }
 
             var isAllowed = false;
-            if (!_usersCache.TryGetValue(message.From.Id, out isAllowed))
+            if (_usersCache.TryGetValue(message.From.Id, out isAllowed))
             {
                 return isAllowed;
             }
 
             try
             {
-                var member = await _botClient.GetChatMemberAsync(_config.TestChatId, message.From.Id);
+                var member = await _botClient.GetChatMemberAsync(_config.AHChatId, message.From.Id);
                 isAllowed = member != null && member.Status != ChatMemberStatus.Left;
                 _usersCache.TryAdd(message.From.Id, isAllowed);
             }
