@@ -11,7 +11,7 @@ namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
     {
         internal static IServiceCollection AddAhRulesFile(this IServiceCollection services)
         {
-            return services.AddSingleton(x => GetRulesFromFile(x.GetService<AppConfig>().RulesFilePath));
+            return services.AddSingleton(x => GetRulesFromFile(x.GetRequiredService<AppConfig>().RulesFilePath));
         }
 
         private static List<RuleItem> GetRulesFromFile(string location)
