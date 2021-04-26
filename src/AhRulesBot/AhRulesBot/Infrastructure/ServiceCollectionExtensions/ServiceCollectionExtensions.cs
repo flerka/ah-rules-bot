@@ -11,7 +11,7 @@ namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
         internal static IServiceCollection AddTelegramBotClient(this IServiceCollection services)
         {
             return services.AddSingleton<ITelegramBotClient>(
-                ctx => new TelegramBotClient(ctx.GetService<AppConfig>().ApiKey));
+                ctx => new TelegramBotClient(ctx.GetRequiredService<AppConfig>().ApiKey));
         }
 
         internal static IServiceCollection AddSerilogLogging(this IServiceCollection services)

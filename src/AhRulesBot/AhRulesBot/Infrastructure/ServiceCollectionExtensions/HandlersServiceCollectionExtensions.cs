@@ -15,7 +15,7 @@ namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
             services.AddSingleton<CustomRulesMessageHandler>(
                 x => new CustomRulesMessageHandler(x.GetRequiredService<ChannelReader<List<CustomRuleItem>>>(), null));
             services.AddSingleton<CardsMessageHandler>(
-                x => new CardsMessageHandler(x.GetRequiredService<ILogger>(), x.GetRequiredService<List<Card>>(), x.GetRequiredService<CustomRulesMessageHandler>()));
+                x => new CardsMessageHandler(x.GetRequiredService<List<Card>>(), x.GetRequiredService<CustomRulesMessageHandler>()));
             services.AddSingleton<RulesMessageHandler>(
                 x => new RulesMessageHandler(x.GetRequiredService<List<RuleItem>>(), x.GetRequiredService<CardsMessageHandler>()));
             services.AddSingleton<CommandMessageHandler>(

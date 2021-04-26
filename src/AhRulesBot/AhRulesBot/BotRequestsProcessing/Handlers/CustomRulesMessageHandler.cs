@@ -10,14 +10,14 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
 {
     internal class CustomRulesMessageHandler : IMessageHandler
     {
-        private readonly IMessageHandler _next;
+        private readonly IMessageHandler? _next;
         private readonly ChannelReader<List<CustomRuleItem>> _channel;
 
         private List<CustomRuleItem> CustomRules = new();
 
         public CustomRulesMessageHandler(
             ChannelReader<List<CustomRuleItem>> channel,
-            IMessageHandler next)
+            IMessageHandler? next)
         {
             _channel = channel;
             _next = next;
@@ -39,7 +39,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             bool messageContains(CustomRuleItem item) => item.Title.Contains(message, StringComparison.InvariantCultureIgnoreCase);
             bool messageExact(CustomRuleItem item) => item.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase);
 
-            while (_channel.TryRead(out List<CustomRuleItem> rulesUpdate) && rulesUpdate != null)
+            while (_channel.TryRead(out List<CustomRuleItem>? rulesUpdate) && rulesUpdate != null)
             {
                 CustomRules = rulesUpdate;
             }

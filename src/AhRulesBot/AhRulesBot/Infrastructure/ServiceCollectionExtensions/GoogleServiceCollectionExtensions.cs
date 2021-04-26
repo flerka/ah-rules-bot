@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.IO;
+using System;
 
 namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
 {
@@ -14,7 +15,7 @@ namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
     {
         public static IServiceCollection AddRulesDriveService(this IServiceCollection services)
         {
-            return services.AddSingleton<IDriveService>(x => GetDrive(x.GetService<AppConfig>().GoogleCredFilePath));
+            return services.AddSingleton<IDriveService>(x => GetDrive(x.GetRequiredService<AppConfig>().GoogleCredFilePath));
         }
 
         private static RulesDriveService GetDrive(string googleCredPath)
@@ -44,8 +45,14 @@ namespace AhRulesBot.Infrastructure.ServiceCollectionExtensions
                 },
                 Formatting = Formatting.Indented
             };
+            var result = JsonConvert.DeserializeObject<JsonCredentialParameters>(File.ReadAllText(googleCredPath), settings);
+            if (result == null)
+            {
+                Exception argumentNullException = new("JsonCredentialParameters is null");
+                throw argumentNullException;
+            }
 
-            return JsonConvert.DeserializeObject<JsonCredentialParameters>(File.ReadAllText(googleCredPath), settings);
+            return result;
         }
     }
 }

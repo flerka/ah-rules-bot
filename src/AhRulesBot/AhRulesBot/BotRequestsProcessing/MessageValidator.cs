@@ -31,8 +31,7 @@ namespace AhRulesBot.BotRequestsProcessing
         public MessageValidator(
             ILogger logger,
             AppConfig config,
-            ITelegramBotClient botClient,
-            List<RuleItem> rules)
+            ITelegramBotClient botClient)
         {
             _logger = logger;
             _config = config;
