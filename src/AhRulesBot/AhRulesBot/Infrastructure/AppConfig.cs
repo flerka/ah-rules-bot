@@ -15,5 +15,14 @@ namespace AhRulesBot.Infrastructure
 
         public string RulesFilePath { get; set; } = string.Empty;
         public string CardsFilePath { get; set; } = string.Empty;
+
+        public string NightAzStSpoilerIdTg { get; set; } = string.Empty;
+        public string DunwichStSpoilerIdTg { get; set; } = string.Empty;
+        public string CarcosaStSpoilerIdTg { get; set; } = string.Empty;
+        public string ForgAgeStSpoilerIdTg { get; set; } = string.Empty;
+        public string CircleUndoneStSpoilerIdTg { get; set; } = string.Empty;
+        public string StandAloneStSpoilerIdTg { get; set; } = string.Empty;
+        public string NotLocalStSpoilerIdTg { get; set; } = string.Empty;
+        public string NotNotLocalStSpoilerIdTg { get; set; } = string.Empty;
     }
 }

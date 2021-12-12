@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 
 namespace AhRulesBot.BotRequestsProcessing
 {
@@ -71,15 +72,32 @@ namespace AhRulesBot.BotRequestsProcessing
             }
         }
 
-        private async Task SendBatchMessagesToChat(long chatId, List<string> msgs, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
+        private async Task SendBatchMessagesToChat(long chatId, List<HandlerResultData> msgs, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
         {
             if (msgs == null || msgs.Count == 0)
                 return;
 
             foreach (var msg in msgs)
             {
-                var result = await _botClient.SendTextMessageAsync(new ChatId(chatId), msg, ParseMode.Html, cancellationToken: cancellationToken);
-                if (ttl.HasValue)
+                Message? result = null;
+                if (string.IsNullOrEmpty(msg.TelegramStickerId) && string.IsNullOrEmpty(msg.TelegramImageUrl))
+                {
+                    result = await _botClient.SendTextMessageAsync(new ChatId(chatId), msg.Text, ParseMode.Html, cancellationToken: cancellationToken);
+                }
+
+                if (!string.IsNullOrEmpty(msg.TelegramStickerId))
+                {
+                    var file = new InputOnlineFile(msg.TelegramStickerId);
+                    result = await _botClient.SendStickerAsync(new ChatId(chatId), file, cancellationToken: cancellationToken);
+                }
+
+                if (!string.IsNullOrEmpty(msg.TelegramImageUrl))
+                {
+                    var file = new InputOnlineFile(msg.TelegramImageUrl);
+                    result = await _botClient.SendPhotoAsync(new ChatId(chatId), file, msg.Text, ParseMode.Html, cancellationToken: cancellationToken);
+                }
+
+                if (ttl.HasValue && result != null)
                 {
                     await _channel.WriteAsync(new TelegramMessageInfo
                     { ChatId = chatId, Id = result.MessageId, Ttl = ttl.Value, SentUtc = DateTime.UtcNow }, cancellationToken);

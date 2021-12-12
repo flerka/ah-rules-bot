@@ -19,6 +19,14 @@ services:
       AhRulesBot_GoogleFileId: "ID"
       AhRulesBot_CardsFilePath: "cards_json_location"
       AhRulesBot_RulesFilePath: "rules_json_location"
+      AhRulesBot_NightAzStSpoilerIdTg: "telegram_file_id"
+      AhRulesBot_DunwichStSpoilerIdTg: "telegram_file_id"
+      AhRulesBot_CarcosaStSpoilerIdTg: "telegram_file_id"
+      AhRulesBot_ForgAgeStSpoilerIdTg: "telegram_file_id"
+      AhRulesBot_CircleUndoneStSpoilerIdTg: "telegram_file_id"
+      AhRulesBot_StandAloneStSpoilerIdTg: "telegram_file_id"
+      AhRulesBot_NotLocalStSpoilerIdTg: "telegram_file_id"
+      AhRulesBot_NotNotLocalStSpoilerIdTg: "telegram_file_id"
     networks:
       - rpi
     restart: unless-stopped

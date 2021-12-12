@@ -16,11 +16,11 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
         public HandlerResult Handle(string message)
         {
             var nextResult = _next.Handle(message);
-
-            var concatMessage = string.Join("\n\n\n\n", nextResult.Data);
-            nextResult.Data = concatMessage.Length <= 4000 ?
-                new List<string>() { concatMessage } :
-                nextResult.Data.Take(2).ToList();
+            var textItems = nextResult.Data.Select(i => i.Text);
+            var concatMessage = string.Join("\n\n\n\n", textItems);
+            nextResult.Data = nextResult.Data.All(i => i.TelegramImageUrl == null && i.TelegramStickerId == null) && concatMessage.Length <= 4000 ?
+                new List<HandlerResultData> { new HandlerResultData { Text = concatMessage } } :
+                nextResult.Data.Take(3).ToList();
 
             return nextResult;
         }

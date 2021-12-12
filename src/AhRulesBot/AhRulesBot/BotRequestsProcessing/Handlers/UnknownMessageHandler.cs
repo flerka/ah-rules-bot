@@ -21,7 +21,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             var nextResult = _next.Handle(message);
             if (!nextResult.Data.Any())
             {
-                nextResult.Data.Add(UnknownResultMessage);
+                nextResult.Data.Add(new HandlerResultData { Text = UnknownResultMessage });
                 nextResult.Ttl = TechMsgTtl;
             }
 
