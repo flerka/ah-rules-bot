@@ -34,7 +34,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             return _next != null ? _next.Handle(message) : new HandlerResult();
         }
 
-        private List<string> ProcessRulesRequest(string message)
+        private List<HandlerResultData> ProcessRulesRequest(string message)
         {
             bool messageContains(CustomRuleItem item) => item.Title.Contains(message, StringComparison.InvariantCultureIgnoreCase);
             bool messageExact(CustomRuleItem item) => item.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase);
@@ -47,7 +47,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             return CustomRules.Where(messageContains)
                 .OrderByDescending(messageExact)
                 .ThenBy(i => message.CalcLevenshteinDistance(i.Title))
-                .Select(i => $"<b>{i.Title}</b>\n{i.Text}").ToList();
+                .Select(i => new HandlerResultData { Text = $"<b>{i.Title}</b>\n{i.Text}", TelegramImageUrl = i.TelegramImgUrl }).ToList();
         }
 
         private static bool TryParseAsCustomRulesRequest()

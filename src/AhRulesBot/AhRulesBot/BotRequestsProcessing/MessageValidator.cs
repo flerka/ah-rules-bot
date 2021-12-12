@@ -98,8 +98,8 @@ namespace AhRulesBot.BotRequestsProcessing
 
             try
             {
-                var member = await _botClient.GetChatMemberAsync(_config.AHChatId, message.From.Id);
-                isAllowed = member != null && member.Status != ChatMemberStatus.Left;
+                var member = await _botClient.GetChatMemberAsync(_config.TestChatId, message.From.Id);
+                isAllowed = (member != null && member.Status != ChatMemberStatus.Left);
                 _usersCache.TryAdd(message.From.Id, isAllowed);
             }
             catch

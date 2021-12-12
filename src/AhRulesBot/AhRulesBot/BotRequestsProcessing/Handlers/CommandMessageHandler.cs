@@ -24,7 +24,7 @@ namespace AhRulesBot.BotRequestsProcessing.Handlers
             return _next != null ? _next.Handle(message) : new HandlerResult();
         }
 
-        private List<string> ProcessCommand(object command)
+        private List<HandlerResultData> ProcessCommand(object command)
         {
             throw new NotImplementedException();
         }
